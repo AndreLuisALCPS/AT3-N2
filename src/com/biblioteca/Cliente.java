@@ -22,13 +22,11 @@ public class Cliente {
                 switch (comando.toLowerCase()) {
                     case "listar":
                         String resposta;
-                        while ((resposta = in.readLine()) != null && resposta != "END") {
+                        while ((resposta = in.readLine()) != null && !resposta.equals("END")) {
                             System.out.println(resposta);
                         }
-                        System.out.println("--------- acabou resposta");
                         break;
                     case "cadastrar":
-                        out.println(comando);
                         System.out.print("Autor: ");
                         String autor = console.readLine();
                         System.out.print("Título: ");
@@ -38,36 +36,25 @@ public class Cliente {
                         System.out.print("Número de Exemplares: ");
                         String numExemplares = console.readLine();
 
-                        // Envia os detalhes do livro após receber confirmação do servidor
                         out.println(autor);
                         out.println(titulo);
                         out.println(genero);
                         out.println(numExemplares);
                         System.out.println(in.readLine());
                         break;
-
                     case "alugar":
-                        out.println(comando);
-
-                        // O servidor já enviou "Pronto para alugar o livro."
-                        System.out.println(in.readLine());
-
+                        System.out.println(in.readLine()); // Recebe "Pronto para alugar o livro."
                         System.out.print("Título: ");
                         String tituloAlugar = console.readLine();
-                        out.println(tituloAlugar); // Envia o título exatamente como digitado
-
-                        String respostaAluguel = in.readLine();
-                        System.out.println(respostaAluguel); 
+                        out.println(tituloAlugar);
+                        System.out.println(in.readLine()); // Recebe resposta do aluguel
                         break;
-
                     case "devolver":
-                        out.println(comando);
-                        System.out.println(in.readLine()); // Recebe a mensagem "Pronto para devolver o livro."
-
+                        System.out.println(in.readLine()); // Recebe "Pronto para devolver o livro."
                         System.out.print("Título: ");
-                        out.println(console.readLine());
-
-                        System.out.println(in.readLine()); // Recebe a resposta do servidor
+                        String tituloDevolver = console.readLine();
+                        out.println(tituloDevolver);
+                        System.out.println(in.readLine()); // Recebe resposta da devolução
                         break;
                     default:
                         System.out.println("Comando desconhecido.");
