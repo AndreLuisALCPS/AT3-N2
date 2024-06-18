@@ -13,7 +13,6 @@ public class Livro {
         this.exemplares = exemplares;
     }
 
-    // Getters e Setters
     public String getAutor() {
         return autor;
     }
@@ -46,7 +45,6 @@ public class Livro {
         this.exemplares = exemplares;
     }
 
-    // Métodos getNome e getNumeroExemplares para compatibilidade
     public String getNome() {
         return getTitulo();
     }
