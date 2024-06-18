@@ -27,21 +27,32 @@ public class Cliente {
                         }
                         break;
                     case "cadastrar":
+                        out.println(comando); // Envia comando "cadastrar"
                         System.out.print("Autor: ");
-                        out.println(console.readLine());
+                        String autor = console.readLine();
                         System.out.print("Título: ");
-                        out.println(console.readLine());
+                        String titulo = console.readLine();
                         System.out.print("Gênero: ");
-                        out.println(console.readLine());
+                        String genero = console.readLine();
                         System.out.print("Número de Exemplares: ");
-                        out.println(console.readLine());
-                        System.out.println(in.readLine());
+                        String numExemplares = console.readLine();
+
+                        // Envia os detalhes do livro após receber confirmação do servidor
+                        out.println(autor);
+                        out.println(titulo);
+                        out.println(genero);
+                        out.println(numExemplares);
+                        System.out.println(in.readLine()); 
                         break;
+
                     case "alugar":
+                        out.println(comando); // Envia comando "alugar"
                         System.out.print("Título: ");
-                        out.println(console.readLine());
-                        System.out.println(in.readLine());
+                        titulo = console.readLine();
+                        out.println(titulo);
+                        System.out.println(in.readLine()); // Recebe resposta do servidor
                         break;
+
                     case "devolver":
                         System.out.print("Título: ");
                         out.println(console.readLine());
