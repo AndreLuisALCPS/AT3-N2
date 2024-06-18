@@ -46,6 +46,7 @@ public class Servidor {
         for (Livro livro : livros) {
             out.println(livro);
         }
+        out.println("END");
     }
 
     public void cadastrarLivro(String autor, String titulo, String genero, int exemplares) {
@@ -55,8 +56,8 @@ public class Servidor {
 
     public boolean alugarLivro(String titulo) {
         for (Livro livro : livros) {
-            if (livro.getNome().equalsIgnoreCase(titulo) && livro.getNumeroExemplares() > 0) {
-                livro.setExemplares(livro.getExemplares() - 1);
+            if (livro.getTitulo().equalsIgnoreCase(titulo) && livro.getNumeroExemplares() > 0) {
+                livro.setExemplares(livro.getNumeroExemplares() - 1);
                 salvarLivros();
                 return true;
             }
@@ -64,9 +65,10 @@ public class Servidor {
         return false;
     }
 
+
     public boolean devolverLivro(String titulo) {
         for (Livro livro : livros) {
-            if (livro.getNome().equalsIgnoreCase(titulo)) {
+            if (livro.getTitulo().equalsIgnoreCase(titulo)) {
                 livro.setExemplares(livro.getExemplares() + 1);
                 salvarLivros();
                 return true;
@@ -78,12 +80,13 @@ public class Servidor {
     public void iniciar() {
         try (ServerSocket serverSocket = new ServerSocket(12345)) {
             System.out.println("Servidor iniciado na porta 12345...");
-            while (true) {
-                try (Socket clientSocket = serverSocket.accept();
+               Socket clientSocket = serverSocket.accept();
                      BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
+                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                    while (true) {
 
                     String comando = in.readLine();
+                    System.out.println("comando: " + comando);
                     if (comando != null) {
                         switch (comando.toLowerCase()) {
                             case "listar":
@@ -110,6 +113,7 @@ public class Servidor {
                                 break;
                             case "alugar":
                                 out.println("Pronto para alugar o livro.");
+                                out.flush();
                                 String tituloAlugar = in.readLine();
                                 if (tituloAlugar != null && !tituloAlugar.isEmpty()) {
                                     if (alugarLivro(tituloAlugar)) {
@@ -121,6 +125,7 @@ public class Servidor {
                                     out.println("Erro: Título do livro não recebido.");
                                 }
                                 break;
+
                             case "devolver":
                                 out.println("Pronto para devolver o livro.");
                                 String tituloDevolver = in.readLine();
@@ -138,14 +143,12 @@ public class Servidor {
                                 out.println("Comando desconhecido.");
                                 break;
                         }
-                    }
+                    }}
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            
+        
     }
 
     public static void main(String[] args) {
