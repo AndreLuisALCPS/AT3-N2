@@ -90,6 +90,7 @@ public class Servidor {
                                 listarLivros(out);
                                 break;
                             case "cadastrar":
+                                out.println("Pronto para receber detalhes do livro."); // Confirmação para o cliente
                                 String autor = in.readLine();
                                 String titulo = in.readLine();
                                 String genero = in.readLine();
@@ -97,7 +98,9 @@ public class Servidor {
                                 cadastrarLivro(autor, titulo, genero, exemplares);
                                 out.println("Livro cadastrado com sucesso!");
                                 break;
+
                             case "alugar":
+                                out.println("Pronto para alugar o livro."); // Confirmação para o cliente
                                 titulo = in.readLine();
                                 if (alugarLivro(titulo)) {
                                     out.println("Livro alugado com sucesso!");
@@ -105,6 +108,7 @@ public class Servidor {
                                     out.println("Falha ao alugar o livro.");
                                 }
                                 break;
+
                             case "devolver":
                                 titulo = in.readLine();
                                 if (devolverLivro(titulo)) {
