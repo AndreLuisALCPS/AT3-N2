@@ -8,8 +8,8 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Servidor {
     private static final String ARQUIVO_JSON = "livros.json";
@@ -90,31 +90,48 @@ public class Servidor {
                                 listarLivros(out);
                                 break;
                             case "cadastrar":
-                                out.println("Pronto para receber detalhes do livro."); // Confirmação para o cliente
+                                out.println("Pronto para receber detalhes do livro.");
                                 String autor = in.readLine();
                                 String titulo = in.readLine();
                                 String genero = in.readLine();
-                                int exemplares = Integer.parseInt(in.readLine());
-                                cadastrarLivro(autor, titulo, genero, exemplares);
-                                out.println("Livro cadastrado com sucesso!");
-                                break;
-
-                            case "alugar":
-                                out.println("Pronto para alugar o livro."); // Confirmação para o cliente
-                                titulo = in.readLine();
-                                if (alugarLivro(titulo)) {
-                                    out.println("Livro alugado com sucesso!");
+                                String exemplaresStr = in.readLine();
+                                
+                                if (autor != null && titulo != null && genero != null && exemplaresStr != null) {
+                                    try {
+                                        int exemplares = Integer.parseInt(exemplaresStr);
+                                        cadastrarLivro(autor, titulo, genero, exemplares);
+                                        out.println("Livro cadastrado com sucesso!");
+                                    } catch (NumberFormatException e) {
+                                        out.println("Erro: Número de exemplares inválido.");
+                                    }
                                 } else {
-                                    out.println("Falha ao alugar o livro.");
+                                    out.println("Erro: Informações incompletas recebidas do cliente.");
                                 }
                                 break;
-
-                            case "devolver":
-                                titulo = in.readLine();
-                                if (devolverLivro(titulo)) {
-                                    out.println("Livro devolvido com sucesso!");
+                            case "alugar":
+                                out.println("Pronto para alugar o livro.");
+                                String tituloAlugar = in.readLine();
+                                if (tituloAlugar != null && !tituloAlugar.isEmpty()) {
+                                    if (alugarLivro(tituloAlugar)) {
+                                        out.println("Livro alugado com sucesso!");
+                                    } else {
+                                        out.println("Falha ao alugar o livro.");
+                                    }
                                 } else {
-                                    out.println("Falha ao devolver o livro.");
+                                    out.println("Erro: Título do livro não recebido.");
+                                }
+                                break;
+                            case "devolver":
+                                out.println("Pronto para devolver o livro.");
+                                String tituloDevolver = in.readLine();
+                                if (tituloDevolver != null && !tituloDevolver.isEmpty()) {
+                                    if (devolverLivro(tituloDevolver)) {
+                                        out.println("Livro devolvido com sucesso!");
+                                    } else {
+                                        out.println("Falha ao devolver o livro.");
+                                    }
+                                } else {
+                                    out.println("Erro: Título do livro não recebido.");
                                 }
                                 break;
                             default:
