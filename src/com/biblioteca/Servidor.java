@@ -65,11 +65,10 @@ public class Servidor {
         return false;
     }
 
-
     public boolean devolverLivro(String titulo) {
         for (Livro livro : livros) {
             if (livro.getTitulo().equalsIgnoreCase(titulo)) {
-                livro.setExemplares(livro.getExemplares() + 1);
+                livro.setExemplares(livro.getNumeroExemplares() + 1);
                 salvarLivros();
                 return true;
             }
@@ -80,75 +79,88 @@ public class Servidor {
     public void iniciar() {
         try (ServerSocket serverSocket = new ServerSocket(12345)) {
             System.out.println("Servidor iniciado na porta 12345...");
-               Socket clientSocket = serverSocket.accept();
-                     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-                    while (true) {
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                new Thread(new ClientHandler(clientSocket)).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-                    String comando = in.readLine();
-                    System.out.println("comando: " + comando);
-                    if (comando != null) {
-                        switch (comando.toLowerCase()) {
-                            case "listar":
-                                listarLivros(out);
-                                break;
-                            case "cadastrar":
-                                out.println("Pronto para receber detalhes do livro.");
-                                String autor = in.readLine();
-                                String titulo = in.readLine();
-                                String genero = in.readLine();
-                                String exemplaresStr = in.readLine();
-                                
-                                if (autor != null && titulo != null && genero != null && exemplaresStr != null) {
-                                    try {
-                                        int exemplares = Integer.parseInt(exemplaresStr);
-                                        cadastrarLivro(autor, titulo, genero, exemplares);
-                                        out.println("Livro cadastrado com sucesso!");
-                                    } catch (NumberFormatException e) {
-                                        out.println("Erro: Número de exemplares inválido.");
-                                    }
-                                } else {
-                                    out.println("Erro: Informações incompletas recebidas do cliente.");
-                                }
-                                break;
-                            case "alugar":
-                                out.println("Pronto para alugar o livro.");
-                                out.flush();
-                                String tituloAlugar = in.readLine();
-                                if (tituloAlugar != null && !tituloAlugar.isEmpty()) {
-                                    if (alugarLivro(tituloAlugar)) {
-                                        out.println("Livro alugado com sucesso!");
-                                    } else {
-                                        out.println("Falha ao alugar o livro.");
-                                    }
-                                } else {
-                                    out.println("Erro: Título do livro não recebido.");
-                                }
-                                break;
+    private class ClientHandler implements Runnable {
+        private Socket clientSocket;
 
-                            case "devolver":
-                                out.println("Pronto para devolver o livro.");
-                                String tituloDevolver = in.readLine();
-                                if (tituloDevolver != null && !tituloDevolver.isEmpty()) {
-                                    if (devolverLivro(tituloDevolver)) {
-                                        out.println("Livro devolvido com sucesso!");
-                                    } else {
-                                        out.println("Falha ao devolver o livro.");
-                                    }
-                                } else {
-                                    out.println("Erro: Título do livro não recebido.");
+        public ClientHandler(Socket socket) {
+            this.clientSocket = socket;
+        }
+
+        @Override
+        public void run() {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
+
+                String comando;
+                while ((comando = in.readLine()) != null) {
+                    System.out.println("Comando: " + comando);
+                    switch (comando.toLowerCase()) {
+                        case "listar":
+                            listarLivros(out);
+                            break;
+                        case "cadastrar":
+                            out.println("Pronto para receber detalhes do livro.");
+                            String autor = in.readLine();
+                            String titulo = in.readLine();
+                            String genero = in.readLine();
+                            String exemplaresStr = in.readLine();
+
+                            if (autor != null && titulo != null && genero != null && exemplaresStr != null) {
+                                try {
+                                    int exemplares = Integer.parseInt(exemplaresStr);
+                                    cadastrarLivro(autor, titulo, genero, exemplares);
+                                    out.println("Livro cadastrado com sucesso!");
+                                } catch (NumberFormatException e) {
+                                    out.println("Erro: Número de exemplares inválido.");
                                 }
-                                break;
-                            default:
-                                out.println("Comando desconhecido.");
-                                break;
-                        }
-                    }}
-                } catch (IOException e) {
-                    e.printStackTrace();
+                            } else {
+                                out.println("Erro: Informações incompletas recebidas do cliente.");
+                            }
+                            break;
+                        case "alugar":
+                            out.println("Pronto para alugar o livro.");
+                            String tituloAlugar = in.readLine();
+                            if (tituloAlugar != null && !tituloAlugar.isEmpty()) {
+                                if (alugarLivro(tituloAlugar)) {
+                                    out.println("Livro alugado com sucesso!");
+                                } else {
+                                    out.println("Falha ao alugar o livro.");
+                                }
+                            } else {
+                                out.println("Erro: Título do livro não recebido.");
+                            }
+                            break;
+                        case "devolver":
+                            out.println("Pronto para devolver o livro.");
+                            String tituloDevolver = in.readLine();
+                            if (tituloDevolver != null && !tituloDevolver.isEmpty()) {
+                                if (devolverLivro(tituloDevolver)) {
+                                    out.println("Livro devolvido com sucesso!");
+                                } else {
+                                    out.println("Falha ao devolver o livro.");
+                                }
+                            } else {
+                                out.println("Erro: Título do livro não recebido.");
+                            }
+                            break;
+                        default:
+                            out.println("Comando desconhecido.");
+                            break;
+                    }
                 }
-            
-        
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void main(String[] args) {
