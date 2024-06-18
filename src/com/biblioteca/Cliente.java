@@ -27,7 +27,7 @@ public class Cliente {
                         }
                         break;
                     case "cadastrar":
-                        out.println(comando); // Envia comando "cadastrar"
+                        out.println(comando);
                         System.out.print("Autor: ");
                         String autor = console.readLine();
                         System.out.print("Título: ");
@@ -42,21 +42,29 @@ public class Cliente {
                         out.println(titulo);
                         out.println(genero);
                         out.println(numExemplares);
-                        System.out.println(in.readLine()); 
+                        System.out.println(in.readLine());
                         break;
 
                     case "alugar":
-                        out.println(comando); // Envia comando "alugar"
+                        out.println(comando);
+                        System.out.println(in.readLine()); // Recebe a mensagem "Pronto para alugar o livro."
+
                         System.out.print("Título: ");
-                        titulo = console.readLine();
-                        out.println(titulo);
-                        System.out.println(in.readLine()); // Recebe resposta do servidor
+                        String tituloAlugar = console.readLine();
+                        out.println(tituloAlugar);
+
+                        String respostaAluguel = in.readLine();
+                        System.out.println(respostaAluguel); // Recebe a resposta do servidor
                         break;
 
                     case "devolver":
+                        out.println(comando);
+                        System.out.println(in.readLine()); // Recebe a mensagem "Pronto para devolver o livro."
+
                         System.out.print("Título: ");
                         out.println(console.readLine());
-                        System.out.println(in.readLine());
+
+                        System.out.println(in.readLine()); // Recebe a resposta do servidor
                         break;
                     default:
                         System.out.println("Comando desconhecido.");
