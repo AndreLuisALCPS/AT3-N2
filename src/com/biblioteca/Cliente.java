@@ -22,9 +22,10 @@ public class Cliente {
                 switch (comando.toLowerCase()) {
                     case "listar":
                         String resposta;
-                        while ((resposta = in.readLine()) != null && !resposta.isEmpty()) {
+                        while ((resposta = in.readLine()) != null && resposta != "END") {
                             System.out.println(resposta);
                         }
+                        System.out.println("--------- acabou resposta");
                         break;
                     case "cadastrar":
                         out.println(comando);
@@ -47,14 +48,16 @@ public class Cliente {
 
                     case "alugar":
                         out.println(comando);
-                        System.out.println(in.readLine()); // Recebe a mensagem "Pronto para alugar o livro."
+
+                        // O servidor já enviou "Pronto para alugar o livro."
+                        System.out.println(in.readLine());
 
                         System.out.print("Título: ");
                         String tituloAlugar = console.readLine();
-                        out.println(tituloAlugar);
+                        out.println(tituloAlugar); // Envia o título exatamente como digitado
 
                         String respostaAluguel = in.readLine();
-                        System.out.println(respostaAluguel); // Recebe a resposta do servidor
+                        System.out.println(respostaAluguel); 
                         break;
 
                     case "devolver":
